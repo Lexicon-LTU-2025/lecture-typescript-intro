@@ -23,7 +23,12 @@
   - [Summary of data types](#summary)
 
 - [Functions](#functions)
+
+  - [Anonymous Functions](#anonymous-functions)
+  - [Arrow Functions](#arrow-functions)
+
 - [Objects](#objects)
+  - [Comparing TypeScript Objects to C# Constructs](#comparing-typescript-objects-to-c-constructs)
 - [Interface](#interface)
 - [Types](#types)
 - [Union Types](#union-types)
@@ -316,24 +321,243 @@ if (typeof value === 'string') {
 
 ## Arrays
 
+An array is a list that holds multiple values of the same type. TypeScript ensures type safety, so all elements in an array must match the declared type.
+
+In TypeScript, arrays behave more like List<T> in C# — you can grow or shrink them easily using methods like .push() or .pop(). These are called array methods and there exist a lot of them and it is something we will cover as we go.
+
+There are two common ways to declare arrays:
+
+```ts
+const scores: number[] = [90, 85, 70]; // square bracket syntax
+const names: Array<string> = ['Alice', 'Bob']; // generic syntax, not very common.
+```
+
+In this course, we will use the square bracket syntax consistently. It's straightforward to use — simply specify the type, followed by a pair of square brackets.
+
+Always use const when declaring arrays, since arrays are reference types — they point to a memory location where the actual data is stored.
+
+Using const prevents reassignment of the array variable itself, but does not make the array immutable. You can still modify its contents (e.g., add or remove items) because the reference stays the same — only the internal data changes.
+
+```ts
+const items: string[] = ['apple', 'banana'];
+items.push('orange'); // ✅ allowed
+items = []; // ❌ Error: assignment to constant variable
+```
+
+Just to showcase the type safety:
+
+```ts
+const numbers: number[] = [1, 2, 3];
+
+numbers.push(4); // ✅ OK
+numbers.push('five'); // ❌ Error: Argument of type 'string' is not assignable to parameter of type 'number'
+```
+
+> 💡 TypeScript enforces type safety, so if you declare number[], only numbers are allowed. Trying to push a string _( or any other type )_ will result in a compile-time error.
+
 [Back to top](#introduction-to-typescript)
 
 ## Functions
 
+Functions allow you to group and reuse logic. In TypeScript, you define both the parameter types and the return type, much like in C#.
+
+You can declare a function using the function keyword. This is the most common and explicit way to define a named function in TypeScript.
+
+```ts
+function greet(name: string): string {
+  return `Hello, ${name}`;
+}
+```
+
+C# e quivalent
+
+```csharp
+string Greet(string name) {
+    return $"Hello, {name}";
+}
+```
+
+- The function keyword introduces a named function declaration.
+
+- Parameter types and return type must be declared for clarity and safety.
+
+- This structure closely resembles a method in C#.
+
+> 📌 Note: Unlike C#, the function keyword is required in TypeScript for declaring a regular function.
+
 [Back to top](#introduction-to-typescript)
 
+---
+
+### Anonymous Functions
+
+An anonymous function is a function without a name. It's often used as a **callback** or assigned to a variable.
+
+```ts
+const log = function (message: string): void {
+  console.log(message);
+};
+
+log('Hello');
+```
+
+> 📌 Note: In TypeScript, the function keyword is used to define the function, and it's stored in a variable. This is sometimes called a function expression.
+
+[Back to top](#introduction-to-typescript)
+
+---
+
+### Arrow Functions
+
+Arrow functions are a shorter syntax for writing anonymous functions. They’re especially useful for **callbacks** and simple operations.
+
+```ts
+const log = (message: string): void => {
+  console.log(message);
+};
+```
+
+> 📌 Arrow function syntax is very common in modern JavaScript and TypeScript, especially in frameworks like React, Vue, and Angular. It improves readability and is the preferred style in most modern codebases.
+
 ## Objects
+
+An **object** in TypeScript is a data structure used to group related values together using key–value pairs. Each value is stored under a named property.
+
+Objects are used to represent things like users, settings, or items — and are one of the most common building blocks in TypeScript.
+
+```ts
+const user = {
+  name: 'Alice',
+  age: 30,
+};
+```
+
+> 🆚 In C#, this is similar to creating an instance of a class, record, or even an anonymous object.
+
+TypeScript will automatically infer the structure _( shape )_ of the object. Once that's done, you're not allowed to add new properties or change the type of existing ones.
+
+```ts
+const user = {
+  name: 'Alice',
+  age: 30,
+};
+
+user.name = 'Bob'; // ✅ OK – still a string
+user.age = 31; // ✅ OK – still a number
+user.age = '31'; // ❌ Error: Type 'string' is not assignable to type 'number'
+user.email = 'a@b.com'; // ❌ Error: Property 'email' does not exist on type '{ name: string; age: number; }'
+```
+
+### Comparing TypeScript Objects to C# Constructs
+
+| TypeScript Usage                                  | Closest C# Equivalent            | Notes                                              |
+| ------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
+| Literal object with fixed keys and types          | `class` or `record`              | Like a simple class instance with named properties |
+| Object where you modify values later              | `class` with mutable properties  | Same behavior — mutable by default                 |
+| Readonly object                                   | `record` or `struct` with `init` | Can simulate immutability using `readonly` in TS   |
+| Object with dynamic keys (`{ [key: string]: T }`) | `Dictionary<string, T>`          | Often used when keys are not known in advance      |
 
 [Back to top](#introduction-to-typescript)
 
 ## Interface
 
+An interface in TypeScript defines the structure of an object — what properties it must have and what types those properties should be.
+
+You can think of it like a blueprint or contract that objects must follow.
+
+```ts
+interface User {
+  name: string;
+  age: number;
+}
+
+const user: User = {
+  name: 'Alice',
+  age: 30,
+};
+```
+
+- The User interface specifies that any object of this type must have a name _(string)_ and an age _(number)_.
+
+- TypeScript will give you an error if you try to leave out a property or use the wrong type.
+
+```ts
+const brokenUser: User = {
+  name: 'Bob',
+}; // ❌ Error: Property 'age' is missing
+```
+
+You can mark properties as optional using ?:
+
+```ts
+interface User {
+  name: string;
+  age?: number;
+}
+
+const user: User = {
+  name: 'Charlie',
+}; // ✅ OK – age is optional
+```
+
+> 💡 Tip: Interfaces make your code more readable, reusable, and consistent — especially when working with functions, APIs, or large applications.
+
 [Back to top](#introduction-to-typescript)
 
 ## Types
 
+A type alias lets you create a custom name for a specific type or combination of types. This is useful when you want to simplify complex types or give a name to a structure.
+
+```ts
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+};
+
+const item: Product = {
+  id: 1,
+  name: 'Book',
+  price: 99.99,
+};
+```
+
+> 📌 This works just like an interface — in most cases, type and interface can be used interchangeably for object shapes.
+
 [Back to top](#introduction-to-typescript)
 
 ## Union Types
+
+A union type lets a variable hold more than one possible type. You define it using the | (pipe) symbol.
+
+```ts
+let id: string | number;
+
+id = 123; // ✅ OK
+id = 'abc123'; // ✅ OK
+id = true; // ❌ Error: boolean not allowed
+```
+
+You can use union types in function parameters too:
+
+```ts
+function log(value: string | number): void {
+  console.log('Value:', value);
+}
+```
+
+Inside the function, you often need to check the type before using it:
+
+```ts
+function handle(input: string | number) {
+  if (typeof input === 'string') {
+    console.log(input.toUpperCase());
+  } else {
+    console.log(input.toFixed(2));
+  }
+}
+```
+
+You can also use union typs with arrays an objects.
 
 [Back to top](#introduction-to-typescript)

@@ -338,7 +338,7 @@ Using const prevents reassignment of the array variable itself, but does not mak
 But first, let us try and access the elements in the array.
 
 ```ts
-const items: string[] = ["apple", "banana", "orange"];
+const items: string[] = ['apple', 'banana', 'orange'];
 ```
 
 Two ways to access elements. First is using array brackets to access a specific index.
@@ -357,4 +357,222 @@ console.log(item); // apple
 
 The `.at()` method is quite new and your application might need to specify a specific version of JS. The `.at()` accepts negative values as well which can be nice to have in some cases.
 
+### Array methods
 
+Array methods are methods that are avaialble on all created arrays out of the box.
+
+#### push(element1, element2, ... ): number
+
+- Purpose: Adds one or more lemeents ot the end of an array.
+- Returns: The new length of the array
+
+```ts
+const items: string[] = ['apple', 'banana', 'orange'];
+
+items.push('pear'); // Works
+items.push(10); // Not allowed.
+console.log(items); // ["apple", "banana", "orange", "pear"];
+```
+
+#### pop(): element
+
+- Purpose: removes the last element of an array.
+- Returns: The removed element.
+
+```ts
+const items: string[] = ['apple', 'banana', 'orange'];
+
+const removedItem = items.pop();
+
+console.log(items); // ['apple', 'banana']
+console.log(removedItem); // 'orange'
+```
+
+#### filter(callback): newArray
+
+- Purpose: Creates a new array with the result of calling the callback on every element. The callback must return true or false.
+- Returns: A new array _( original is unchanged )_
+
+```ts
+const numbers: number[] = [1, 2, 3, 4, 5, 6];
+
+// Let's filter all the uneven numbers
+
+const evenNumbers = numbers.filter((n) => {
+  return n % 2 === 0;
+});
+
+console.log(evenNumbers); // [2,4,6]
+```
+
+So it works by keeping the values that resultet in a true value in the callback functino, and removes the false ones.
+
+#### map(callback): newArray
+
+Use to modify each element and return those elements in a new array.
+
+- Purpose: Creates a new array with the result of calling a callback on every element. The callback must return a new element of the same type in each iteration.
+- Returns: A new array
+
+```ts
+const numbers: number[] = [1, 2, 3, 4, 5, 6];
+
+const doubled = numbers.map((n) => {
+  return n * 2;
+});
+
+console.log(dobled); // [2, 4, 6, 8, 10, 12]
+```
+
+This example above can be shortened if the code is simple.
+
+```ts
+const doubled = numbers.map((n) => n * 2);
+```
+
+This works the same way as in C#.
+
+#### forEach(callback): undefined
+
+- Purpose: Executes a provided callback once for each element.
+- Returns: undefined. _( can not chain for array methods.)_
+
+In short, this method is just a for loop but forEach is used more commonly in functional programming.
+
+```ts
+const numbers: number[] = [1, 2, 3, 4, 5, 6];
+
+numbers.forEach((n) => {
+  console.log(n);
+});
+```
+
+There are many methods that you can use. Here is a link:
+
+[All existing array methods in JS](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+
+## Objects
+
+An object in JS is a data structure used to group related values together using key-value pairs. Each value is stored under a named propery. It is also called an object literal.
+
+Used to represent all things like a user, a setting, a car, a house and so on. Very common in JS. This is an example on how to create one:
+
+```ts
+const user = {
+  name: 'niklas',
+  age: 34,
+  country: 'sweden',
+};
+```
+
+> In C#, this is similar ro creating an instance of a class, record or even annonymous object.
+
+TS will automatically infer the structure of the object. This means, when you have created an object with properties, you can't changed that.
+
+```ts
+user.name = 'henrik'; // Works, since name is a string.
+user.age = 35; // Works as well.
+user.age = '35'; // Error: Type 'string' is not assignable to type 'number'
+user.email = 'niklas@niklas.com'; // Error: Property 'email' does not exist on type '{ name: string; age: number; country: string; }'
+```
+
+You can also access properties on objects by using an array-like syntax.
+
+```ts
+const user = {
+  name: 'niklas',
+  age: 34,
+  country: 'sweden',
+};
+
+const name = user['name'];
+console.log(name); // niklas
+```
+
+This way demands some more work in order to get TS to understand what we are doing. But we are going to cover that now.
+
+### Comparing TypeScript Objects to C# Constructs
+
+| TypeScript Usage                                  | Closest C# Equivalent            | Notes                                              |
+| ------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
+| Literal object with fixed keys and types          | `class` or `record`              | Like a simple class instance with named properties |
+| Object where you modify values later              | `class` with mutable properties  | Same behavior — mutable by default                 |
+| Readonly object                                   | `record` or `struct` with `init` | Can simulate immutability using `readonly` in TS   |
+| Object with dynamic keys (`{ [key: string]: T }`) | `Dictionary<string, T>`          | Often used when keys are not known in advance      |
+
+## Interface
+
+An interface in TS defines the structure of an object. What properties it must have and what types those properties should be. Like a blueprint.
+
+```ts
+interface IUser {
+  name: string;
+  age: number;
+  country: string;
+}
+
+const user: IUser = {
+  name: 'niklas',
+  age: 34,
+  country: 'sweden',
+};
+```
+
+- The User interface specifies that any object of this type must the given properties with the correct type.
+- TS will give you an error if you try to leave out a property
+
+```ts
+const brokenUser: IUser {
+  name: 'niklas',
+  country: 'sweden',
+} // Error: Property 'age' is missing
+```
+
+You can mark properties as optional using `?`.
+
+```ts
+interface ICar {
+  color: string;
+  make: string;
+  model?: string;
+}
+
+const volvo: ICar = {
+  color: 'red',
+  make: 'volvo',
+};
+```
+
+This code will make model undefined, which is fine according to the interface.
+
+## Union Type
+
+As with everything in JS, you are free to do a lot of things. In this case, I want to show that a variable, or property in an object can be of several types if needed. This is call union type.
+
+```ts
+let id: string | number;
+
+id = 123; // OK
+id = '123'; // Also ok
+```
+
+This "pipe" character is used to specify this union type. And we can use it everywhere!
+
+```ts
+interface ICar {
+  model: string;
+  color: string;
+  regNr: string | number;
+  isInsured: string | number | boolean;
+}
+
+function log(value: string | number): void | string {
+  if (typeof value === 'string') {
+    return `This is the value: ${value}`;
+  }
+
+  console.log(`This is the value ${value}`);
+}
+```
+
+So, if you want crazy, you can have crazy! But it will not end good for you in that case...

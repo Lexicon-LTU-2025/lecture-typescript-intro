@@ -132,7 +132,6 @@ var total = 100;
 var total = 100;
 ```
 
----
 
 ## Data Types
 
@@ -193,7 +192,7 @@ Single quotes '...'
 
 Double quotes "..."
 
-Backticks `...` for template literals _( preferred when inserting variables, just like interpolated string using the $ symbol in C# )_
+Backticks ` `` ` for template literals _( preferred when inserting variables, just like interpolated string using the $ symbol in C# )_
 
 ```ts
 const firstName: string = 'Alice';
@@ -285,7 +284,7 @@ anything = true;
 
 ### Unknown
 
-Like `any`, but safer — you must check its type before using it.
+Like `any`, but safer — you must check its type 
 
 ```ts
 let value: unknown = 'hello';
